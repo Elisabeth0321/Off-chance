@@ -1,4 +1,4 @@
-import {hashPassword} from "./hash";
+import {hashPassword} from "./hash.js";
 
 class RegistrationForm {
     constructor(formId, errorContainerId) {

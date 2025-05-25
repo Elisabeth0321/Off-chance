@@ -1,15 +1,14 @@
 package com.lizaveta.controller;
 
 import com.lizaveta.model.fileDTO.FileInfoDto;
-import com.lizaveta.service.FileManagerService;
-import lombok.RequiredArgsConstructor;
+import com.lizaveta.service.storage.StorageService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -18,9 +17,9 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/off-chance")
 @RequiredArgsConstructor
-public class FileManagerController {
+public class StorageController {
 
-    private final FileManagerService fileManagerService;
+    private final StorageService fileManagerService;
 
     @GetMapping("/storage")
     public ResponseEntity<List<FileInfoDto>> listFiles(

@@ -1,4 +1,4 @@
-import {hashPassword} from "./hash";
+import {hashPassword} from "./hash.js";
 
 export default class UpdateUser {
     constructor(formId, statusElementId, deleteButtonId) {

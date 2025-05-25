@@ -1,24 +1,20 @@
 package com.lizaveta.controller;
 
 import com.lizaveta.model.User;
-import com.lizaveta.service.FileManagerService;
-import com.lizaveta.service.UserService;
-
+import com.lizaveta.service.storage.StorageService;
+import com.lizaveta.service.auth.UserService;
 import com.lizaveta.model.userDTO.AuthResponseDTO;
 import com.lizaveta.model.userDTO.RefreshRequestDTO;
 import com.lizaveta.model.userDTO.RegisterRequestDTO;
 import com.lizaveta.model.userDTO.LoginRequestDTO;
 import com.lizaveta.model.userDTO.UpdateRequestDTO;
-
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +25,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final FileManagerService fileManagerService;
+    private final StorageService fileManagerService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {

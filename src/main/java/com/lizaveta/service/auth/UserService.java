@@ -1,27 +1,24 @@
-package com.lizaveta.service;
+package com.lizaveta.service.auth;
 
 import com.lizaveta.model.User;
 import com.lizaveta.model.userDTO.AuthResponseDTO;
 import com.lizaveta.repository.UserRepository;
+import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Service;
-
-import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TokenService tokenService;
+    private final PasswordService passwordService;
 
     public User register(String login, String rawPassword, String email) {
         if (login == null || login.isBlank() || rawPassword == null || rawPassword.isBlank() || email == null || email.isBlank()) {
@@ -32,8 +29,8 @@ public class UserService {
             throw new IllegalArgumentException("Пользователь с таким email уже существует.");
         }
 
-        String salt = generateSalt();
-        String passwordHash = hashPassword(rawPassword, salt);
+        String salt = passwordService.generateSalt();
+        String passwordHash = passwordService.hashPassword(rawPassword, salt);
 
         User user = User.builder()
                 .name(login)
@@ -53,32 +50,22 @@ public class UserService {
         if (userOpt.isEmpty()) return Pair.of(Optional.empty(), null);
 
         User user = userOpt.get();
-        String hash = hashPassword(rawPassword, user.getSalt());
 
-        if (!user.getPasswordHash().equals(hash)) return Pair.of(Optional.empty(), user);
+        if (!passwordService.verifyPassword(rawPassword, user.getSalt(), user.getPasswordHash())) {
+            return Pair.of(Optional.empty(), user);
+        }
 
-        String accessToken = generateToken();
-        String refreshToken = generateToken();
+        String accessToken = tokenService.generateToken();
+        String refreshToken = tokenService.generateToken();
 
         user.setAccessToken(accessToken);
         user.setRefreshToken(refreshToken);
         user.setTimeLastLogin(Instant.now());
         userRepository.save(user);
 
-        int maxAge = rememberMe ? 60 * 60 * 24 * 30 : -1; // 30 дней или сессионная
-
-        Cookie accessCookie = new Cookie("access_token", accessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setPath("/");
-        accessCookie.setMaxAge(maxAge);
-
-        Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(maxAge);
-
-        response.addCookie(accessCookie);
-        response.addCookie(refreshCookie);
+        Cookie accessCookie = tokenService.createAccessTokenCookie(accessToken, rememberMe);
+        Cookie refreshCookie = tokenService.createRefreshTokenCookie(refreshToken, rememberMe);
+        tokenService.addCookies(response, accessCookie, refreshCookie);
 
         AuthResponseDTO authResponse = new AuthResponseDTO(accessToken, refreshToken);
         return Pair.of(Optional.of(authResponse), user);
@@ -87,8 +74,8 @@ public class UserService {
     public Optional<AuthResponseDTO> refreshAccessToken(String refreshToken) {
         return userRepository.findByRefreshToken(refreshToken)
                 .map(user -> {
-                    String newAccessToken = generateToken();
-                    String newRefreshToken = generateToken();
+                    String newAccessToken = tokenService.generateToken();
+                    String newRefreshToken = tokenService.generateToken();
                     user.setAccessToken(newAccessToken);
                     user.setRefreshToken(newRefreshToken);
                     userRepository.save(user);
@@ -103,27 +90,17 @@ public class UserService {
     public boolean logoutByAccessToken(String accessToken, HttpServletResponse response) {
         Optional<User> userOpt = getUserByAccessToken(accessToken);
 
-        if (userOpt.isEmpty()) {
-            return false;
-        }
+        if (userOpt.isEmpty()) return false;
 
         User user = userOpt.get();
         user.setAccessToken(null);
         user.setRefreshToken(null);
         userRepository.save(user);
 
-        Cookie accessCookie = new Cookie("access_token", "");
-        accessCookie.setPath("/");
-        accessCookie.setHttpOnly(true);
-        accessCookie.setMaxAge(0);
-
-        Cookie refreshCookie = new Cookie("refresh_token", "");
-        refreshCookie.setPath("/");
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setMaxAge(0);
-
-        response.addCookie(accessCookie);
-        response.addCookie(refreshCookie);
+        tokenService.addCookies(response,
+                tokenService.deleteAccessTokenCookie(),
+                tokenService.deleteRefreshTokenCookie()
+        );
 
         return true;
     }
@@ -137,8 +114,8 @@ public class UserService {
         }
 
         if (newPassword != null && !newPassword.isBlank()) {
-            String newSalt = generateSalt();
-            String newHash = hashPassword(newPassword, newSalt);
+            String newSalt = passwordService.generateSalt();
+            String newHash = passwordService.hashPassword(newPassword, newSalt);
             user.setSalt(newSalt);
             user.setPasswordHash(newHash);
             changed = true;
@@ -154,34 +131,6 @@ public class UserService {
     }
 
     public String extractTokenFromCookies(HttpServletRequest request) {
-        if (request.getCookies() == null) return null;
-
-        for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("access_token")) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
-    private String generateToken() {
-        return UUID.randomUUID().toString();
-    }
-
-    private String generateSalt() {
-        byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
-        return Base64.getEncoder().encodeToString(salt);
-    }
-
-    private String hashPassword(String password, String salt) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            String salted = password + salt;
-            byte[] hash = digest.digest(salted.getBytes());
-            return Base64.getEncoder().encodeToString(hash);
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка хэширования", e);
-        }
+        return tokenService.extractTokenFromCookies(request);
     }
 }
