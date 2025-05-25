@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Файловый менеджер</title>
+    <link rel="stylesheet" href="css/storage.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Файловый Менеджер</h1>
+
+    <div class="controls">
+        <input type="file" id="fileInput" multiple>
+        <button onclick="uploadFiles()">⬆️ Загрузить файл(ы)</button>
+
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="margin-top:8px;">
+        <button onclick="uploadFolder()">📁 Загрузить папку</button>
+
+        <input type="text" id="folderName" placeholder="Имя новой папки">
+        <button onclick="createFolder()">➕ Создать папку</button>
+
+        <input type="text" id="searchQuery" placeholder="Поиск...">
+        <button onclick="searchFiles()">🔍 Искать</button>
+
+        <button onclick="loadAllFiles()">🗂️ Показать всё</button>
+    </div>
+
+    <div class="navigation-menu">
+        <button onclick="goHome()">🏠 Домой</button>
+        <button onclick="goBack()">🔙 Назад</button>
+        <span>Текущая папка: </span><span id="currentPath"></span>
+    </div>
+
+    <div id="uploadProgressContainer" class="upload-progress-container"></div>
+    <div id="fileList" class="file-list"></div>
+</div>
+
+<script src="js/storage.js"></script>
+</body>
+</html>
