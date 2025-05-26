@@ -25,7 +25,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final StorageService fileManagerService;
+    private final StorageService storageService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
@@ -55,16 +55,20 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
-        Pair<Optional<AuthResponseDTO>, User> result = userService.login(request.email(), request.password(), request.rememberMe(), response);
+        Pair<Optional<AuthResponseDTO>, Optional<User>> result = userService.login(request.email(), request.password(), request.rememberMe(), response);
         Optional<AuthResponseDTO> authOpt = result.getFirst();
         if (authOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Неверный email или пароль"));
         }
 
-        User user = result.getSecond();
+        Optional<User> userOpt = result.getSecond();
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Пользователь с таким email не найден"));
+        }
 
-        createUserDirectory(user.getId());
+        createUserDirectory(userOpt.get().getId());
         return ResponseEntity.ok(authOpt.get());
     }
 
@@ -142,7 +146,7 @@ public class UserController {
 
     private void createUserDirectory(String userId) {
         try {
-            fileManagerService.createUserFolder(userId);
+            storageService.createUserFolder(userId);
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при проверке/создании пользовательской папки", e);
         }
@@ -150,7 +154,7 @@ public class UserController {
 
     private void deleteUserDirectory(String userId) {
         try {
-            fileManagerService.deleteUserFolder(userId);
+            storageService.deleteUserFolder(userId);
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при удалении пользовательской папки", e);
         }

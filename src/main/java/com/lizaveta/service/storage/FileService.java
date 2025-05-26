@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import java.io.*;
 import java.nio.file.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -28,58 +30,17 @@ public class FileService {
         return userRoot.relativize(targetPath).toString();
     }
 
-    public void uploadFolder(Path userRoot, List<MultipartFile> files, List<String> relativePaths, String parentFolderId) throws IOException {
-        if (files == null || files.isEmpty() || relativePaths == null || relativePaths.isEmpty() || files.size() != relativePaths.size()) {
-            throw new IllegalArgumentException("Некорректные данные для загрузки папки");
-        }
-
-        Path relPathObj = Paths.get(relativePaths.get(0));
-        Path targetRoot = FileUtils.resolveSecurePath(userRoot, parentFolderId).resolve(relPathObj.getName(0));
-        String timestamp = FileUtils.generateTimestampedFileName("");
-
-        for (int i = 0; i < files.size(); i++) {
-            MultipartFile file = files.get(i);
-            Path relPath = Paths.get(relativePaths.get(i));
-
-            Path subPath = relPath.getNameCount() > 1
-                    ? relPath.subpath(1, relPath.getNameCount())
-                    : Paths.get(Objects.requireNonNull(file.getOriginalFilename()));
-
-            String fileNameWithTimestamp = timestamp + "_" + subPath.getFileName();
-            Path fullTargetPath = targetRoot.resolve(
-                    subPath.getParent() != null
-                            ? subPath.getParent().resolve(fileNameWithTimestamp)
-                            : Paths.get(fileNameWithTimestamp)
-            ).normalize();
-
-            if (!fullTargetPath.startsWith(userRoot)) {
-                throw new SecurityException("Выход за пределы директории пользователя");
-            }
-
-            FileUtils.createDirectoriesIfNotExist(fullTargetPath.getParent());
-            try (InputStream in = file.getInputStream()) {
-                Files.copy(in, fullTargetPath, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-    }
-
-    @Async
-    public CompletableFuture<byte[]> downloadFileToByteArrayAsync(Path userRoot, String fileId) {
+    public byte[] downloadFileToByteArray(Path userRoot, String fileId) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            downloadFileToStream(userRoot, fileId, outputStream);
-            return CompletableFuture.completedFuture(outputStream.toByteArray());
+            Path filePath = FileUtils.resolveSecurePath(userRoot, fileId);
+            if (!Files.exists(filePath) || Files.isDirectory(filePath)) {
+                throw new FileNotFoundException("Файл не найден: " + fileId);
+            }
+            Files.copy(filePath, outputStream);
+            return outputStream.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public String downloadFileToStream(Path userRoot, String fileId, OutputStream outputStream) throws IOException {
-        Path filePath = FileUtils.resolveSecurePath(userRoot, fileId);
-        if (!Files.exists(filePath) || Files.isDirectory(filePath)) {
-            throw new FileNotFoundException("Файл не найден: " + fileId);
-        }
-        Files.copy(filePath, outputStream);
-        return filePath.getFileName().toString();
     }
 
     public void deleteFile(Path userRoot, String filePath) throws IOException {

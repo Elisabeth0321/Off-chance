@@ -44,15 +44,15 @@ public class UserService {
         return user;
     }
 
-    public Pair<Optional<AuthResponseDTO>, User> login(String email, String rawPassword, boolean rememberMe, HttpServletResponse response) {
+    public Pair<Optional<AuthResponseDTO>, Optional<User>> login(String email, String rawPassword, boolean rememberMe, HttpServletResponse response) {
         Optional<User> userOpt = userRepository.findByEmail(email);
 
-        if (userOpt.isEmpty()) return Pair.of(Optional.empty(), null);
+        if (userOpt.isEmpty()) return Pair.of(Optional.empty(), Optional.empty());
 
         User user = userOpt.get();
 
         if (!passwordService.verifyPassword(rawPassword, user.getSalt(), user.getPasswordHash())) {
-            return Pair.of(Optional.empty(), user);
+            return Pair.of(Optional.empty(), Optional.empty());
         }
 
         String accessToken = tokenService.generateToken();
@@ -68,7 +68,7 @@ public class UserService {
         tokenService.addCookies(response, accessCookie, refreshCookie);
 
         AuthResponseDTO authResponse = new AuthResponseDTO(accessToken, refreshToken);
-        return Pair.of(Optional.of(authResponse), user);
+        return Pair.of(Optional.of(authResponse), Optional.of(user));
     }
 
     public Optional<AuthResponseDTO> refreshAccessToken(String refreshToken) {

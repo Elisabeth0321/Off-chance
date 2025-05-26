@@ -14,7 +14,7 @@ html, body {
     flex-direction: column;
 }
 
-.container {
+body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -58,7 +58,7 @@ main {
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 40px 30px;
+    padding: 20px 20px;
     margin: 30px auto;
     text-align: center;
     max-width: 600px;
@@ -97,22 +97,23 @@ input[type="password"]:focus {
 
 .update-button,
 .delete-button {
-    display: inline-block;
-    width: 200px;
+    max-width: 300px;
+    padding: 12px 24px;
     font-size: 14px;
     font-weight: 600;
     border: none;
     border-radius: 8px;
-    padding: 12px 24px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    display: inline-block;
     text-align: center;
+    margin-top: 20px;
 }
 
 .update-button {
     background-color: #6b5b95;
     color: white;
-    margin-top: 10px;
+    width: 100%;
 }
 
 .update-button:hover {
@@ -122,8 +123,7 @@ input[type="password"]:focus {
 .delete-button {
     background-color: #ff4d4d;
     color: white;
-    margin-top: 25px;
-    text-align: center;
+    width: 38%
 }
 
 .delete-button:hover {

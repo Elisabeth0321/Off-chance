@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -21,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,8 @@ public class StorageService {
     private final HttpServletRequest request;
     private final FolderService folderService;
     private final FileService fileService;
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     private static final Path GLOBAL_STORAGE_ROOT = StoragePath.detect().getPath();
 
@@ -51,31 +55,38 @@ public class StorageService {
         return files;
     }
 
-    public void uploadMultipartFile(MultipartFile file, String folderId) throws IOException {
-        fileService.uploadFile(getUserStorageRoot(), file, folderId);
+    @Async("executorService")
+    public CompletableFuture<String> uploadMultipartFileAsync(MultipartFile file, String folderId, Path userRootPath) throws IOException {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return fileService.uploadFile(userRootPath, file, folderId);
+            } catch (IOException e) {
+                throw new CompletionException(e);
+            }
+        }, executorService);
     }
 
-    public void uploadFolder(List<MultipartFile> files, List<String> relativePaths, String parentFolderId) throws IOException {
-        fileService.uploadFolder(getUserStorageRoot(), files, relativePaths, parentFolderId);
+    @Async("executorService")
+    public CompletableFuture<String> uploadFolderAsync(List<MultipartFile> files, List<String> relativePaths, String parentFolderId, Path userRootPath) throws IOException {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return folderService.uploadFolder(userRootPath, files, relativePaths, parentFolderId);
+            } catch (IOException e) {
+                throw new CompletionException(e);
+            }
+        }, executorService);
     }
 
-    @Async
-    public CompletableFuture<byte[]> downloadFileToByteArrayAsync(String fileId) throws IOException {
-        return fileService.downloadFileToByteArrayAsync(getUserStorageRoot(), fileId);
+    @Async("executorService")
+    public CompletableFuture<byte[]> downloadFileToByteArrayAsync(String fileId, Path userRootPath) throws IOException {
+        return CompletableFuture.supplyAsync(() ->
+                fileService.downloadFileToByteArray(userRootPath, fileId), executorService);
     }
 
-    public String downloadFileToStream(String fileId, OutputStream outputStream) throws IOException {
-        return fileService.downloadFileToStream(getUserStorageRoot(), fileId, outputStream);
-    }
-
-    @Async
-    public CompletableFuture<byte[]> downloadFolderAsZipAsync(String folderId) {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            folderService.zipFolder(FileUtils.resolveSecurePath(getUserStorageRoot(), folderId), outputStream);
-            return CompletableFuture.completedFuture(outputStream.toByteArray());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Async("executorService")
+    public CompletableFuture<byte[]> downloadFolderAsZipAsync(String folderId, Path userRootPath) {
+        return CompletableFuture.supplyAsync(() ->
+                folderService.downloadFolder(userRootPath, folderId), executorService);
     }
 
     public void deleteFile(String filePath) throws IOException {
@@ -123,7 +134,7 @@ public class StorageService {
         folderService.deleteFolder(folderPath);
     }
 
-    private Path getUserStorageRoot() throws IOException {
+    public Path getUserStorageRoot() throws IOException {
         String token = userService.extractTokenFromCookies(request);
         return userService.getUserByAccessToken(token)
                 .map(user -> GLOBAL_STORAGE_ROOT.resolve(user.getId()).normalize())

@@ -4,22 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2457001d-36e8-4c67-9373-3d16aa2d7058" name="Changes" comment="remove Google OAuth Access Token secret">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/StoragePath.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/PasswordService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/TokenService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FileService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FolderService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/util/FileUtils.java" afterDir="false" />
+    <list default="true" id="2457001d-36e8-4c67-9373-3d16aa2d7058" name="Changes" comment="refactored code&#10;added dependency inversion">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/AsyncConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/FileManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/FileManagerService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/account.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/account.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/registration.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/registration.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FileService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FolderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FolderService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/account.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/account.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/account.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/account.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +50,10 @@
     &quot;url&quot;: &quot;https://github.com/Elisabeth0321/Off-chance&quot;,
     &quot;accountId&quot;: &quot;6ff3b9c2-d34e-407b-809a-047d406a09fe&quot;
   }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
 }</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -142,7 +141,9 @@
       <workItem from="1748188870472" duration="399000" />
       <workItem from="1748189340736" duration="60000" />
       <workItem from="1748189405612" duration="552000" />
-      <workItem from="1748198383054" duration="7732000" />
+      <workItem from="1748198383054" duration="7837000" />
+      <workItem from="1748257320927" duration="7339000" />
+      <workItem from="1748283019003" duration="4968000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -160,7 +161,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748189848603</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="refactored code&#10;added dependency inversion">
+      <option name="closed" value="true" />
+      <created>1748207728702</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1748207728702</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -169,7 +178,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial commit" />
     <MESSAGE value="remove Google OAuth Access Token secret" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove Google OAuth Access Token secret" />
+    <MESSAGE value="refactored code&#10;added dependency injection" />
+    <MESSAGE value="refactored code&#10;added dependency inversion" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactored code&#10;added dependency inversion" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
