@@ -4,17 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2457001d-36e8-4c67-9373-3d16aa2d7058" name="Changes" comment="refactored code&#10;added dependency inversion">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/AsyncConfig.java" afterDir="false" />
+    <list default="true" id="2457001d-36e8-4c67-9373-3d16aa2d7058" name="Changes" comment="improved frontend&#10;fix acync methods">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/WebConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/TokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/TokenService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FolderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/FolderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/account.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/account.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/account.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/account.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/storage.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/storage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/hash.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/registration.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/registration.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/storage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/storage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/storage.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/storage.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,34 +71,34 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortKey" value="BY_TIME_ASCENDING" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Gradle.Build remote_backup.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.RemoteBackupApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/WORK/Java projects/shift-intensive-office&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Gradle.Build remote_backup.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.RemoteBackupApplication.executor": "Run",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/WORK/4 СЕМЕСТР/курсовой проект/remote_backup",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mongo&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mongo"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\WORK\4 СЕМЕСТР\курсовой проект\remote_backup\src\main\java\com\lizaveta\config" />
@@ -143,7 +149,20 @@
       <workItem from="1748189405612" duration="552000" />
       <workItem from="1748198383054" duration="7837000" />
       <workItem from="1748257320927" duration="7339000" />
-      <workItem from="1748283019003" duration="4968000" />
+      <workItem from="1748283019003" duration="7277000" />
+      <workItem from="1748354374626" duration="1338000" />
+      <workItem from="1748429600227" duration="708000" />
+      <workItem from="1748447674647" duration="8836000" />
+      <workItem from="1748504773145" duration="3747000" />
+      <workItem from="1748512854286" duration="1746000" />
+      <workItem from="1748520091447" duration="452000" />
+      <workItem from="1748540749512" duration="645000" />
+      <workItem from="1748629808291" duration="10548000" />
+      <workItem from="1748946250437" duration="66000" />
+      <workItem from="1748947587082" duration="1022000" />
+      <workItem from="1749114564008" duration="2833000" />
+      <workItem from="1749128064099" duration="272000" />
+      <workItem from="1749468082797" duration="1056000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -169,7 +188,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748207728702</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="improved frontend&#10;fix acync methods">
+      <option name="closed" value="true" />
+      <created>1748288208200</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1748288208200</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -180,7 +207,8 @@
     <MESSAGE value="remove Google OAuth Access Token secret" />
     <MESSAGE value="refactored code&#10;added dependency injection" />
     <MESSAGE value="refactored code&#10;added dependency inversion" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactored code&#10;added dependency inversion" />
+    <MESSAGE value="improved frontend&#10;fix acync methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="improved frontend&#10;fix acync methods" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

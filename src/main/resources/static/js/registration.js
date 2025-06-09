@@ -1,5 +1,3 @@
-import {hashPassword} from "./hash.js";
-
 class RegistrationForm {
     constructor(formId, errorContainerId) {
         this.form = document.getElementById(formId);
@@ -31,13 +29,11 @@ class RegistrationForm {
             return;
         }
 
-        const hashedPassword = await hashPassword(password);
-
         try {
             const payload = {
                 username,
                 email,
-                password: hashedPassword
+                password
             };
 
             const response = await fetch('/api/users/register', {

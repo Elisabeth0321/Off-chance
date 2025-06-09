@@ -4,6 +4,9 @@ import org.springframework.stereotype.Service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
+
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
@@ -11,22 +14,6 @@ public class TokenService {
 
     public String generateToken() {
         return UUID.randomUUID().toString();
-    }
-
-    public Cookie createAccessTokenCookie(String accessToken, boolean rememberMe) {
-        return createCookie("access_token", accessToken, rememberMe);
-    }
-
-    public Cookie createRefreshTokenCookie(String refreshToken, boolean rememberMe) {
-        return createCookie("refresh_token", refreshToken, rememberMe);
-    }
-
-    public Cookie deleteAccessTokenCookie() {
-        return deleteCookie("access_token");
-    }
-
-    public Cookie deleteRefreshTokenCookie() {
-        return deleteCookie("refresh_token");
     }
 
     public String extractTokenFromCookies(HttpServletRequest request) {
@@ -40,25 +27,33 @@ public class TokenService {
         return null;
     }
 
-    public void addCookies(HttpServletResponse response, Cookie... cookies) {
-        for (Cookie cookie : cookies) {
-            response.addCookie(cookie);
-        }
+    public void addCookies(HttpServletResponse response, String name1, String value1, String name2, String value2, boolean rememberMe) {
+        response.addHeader("Set-Cookie", buildCookie(name1, value1, rememberMe).toString());
+        response.addHeader("Set-Cookie", buildCookie(name2, value2, rememberMe).toString());
     }
 
-    private Cookie createCookie(String name, String value, boolean rememberMe) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(rememberMe ? 60 * 60 * 24 * 30 : -1);
-        return cookie;
+    public void deleteCookies(HttpServletResponse response) {
+        response.addHeader("Set-Cookie", buildExpiredCookie("access_token").toString());
+        response.addHeader("Set-Cookie", buildExpiredCookie("refresh_token").toString());
     }
 
-    private Cookie deleteCookie(String name) {
-        Cookie cookie = new Cookie(name, "");
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        return cookie;
+    private ResponseCookie buildCookie(String name, String value, boolean rememberMe) {
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(rememberMe ? Duration.ofDays(30) : Duration.ofSeconds(-1))
+                .build();
+    }
+
+    private ResponseCookie buildExpiredCookie(String name) {
+        return ResponseCookie.from(name, "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Lax")
+                .maxAge(Duration.ZERO)
+                .build();
     }
 }

@@ -1,10 +1,32 @@
 const BASE_URL = '/api/off-chance';
 let currentRelativePath = '';
 
+document.addEventListener('DOMContentLoaded', () => {
+    initCurrentPath();
+    loadAllFiles();
+});
+
+window.addEventListener('popstate', () => {
+    initCurrentPath();
+    loadAllFiles();
+});
+
+function initCurrentPath() {
+    const fullPath = window.location.pathname;
+    const storagePrefix = '/storage.html';
+
+    currentRelativePath = fullPath.startsWith(storagePrefix)
+        ? decodeURIComponent(fullPath.slice(storagePrefix.length))
+        : '';
+}
+
 function loadAllFiles() {
     fetch(`${BASE_URL}/storage?relativePath=${encodeURIComponent(currentRelativePath)}`)
         .then(response => response.json())
-        .then(files => renderFiles(files))
+        .then(files => {
+            renderFiles(files);
+            updateCurrentPathDisplay();
+        })
         .catch(error => console.error('Ошибка при загрузке файлов:', error));
 }
 
@@ -18,8 +40,7 @@ function renderFiles(files) {
 
         const nameSpan = document.createElement('span');
         nameSpan.className = 'file-name';
-        const icon = file.type === 'FOLDER' ? '📁' : '📄';
-        nameSpan.textContent = `${icon} ${file.name}`;
+        nameSpan.textContent = `${file.type === 'FOLDER' ? '📁' : '📄'} ${file.name}`;
 
         if (file.type === 'FOLDER') {
             nameSpan.style.cursor = 'pointer';
@@ -28,50 +49,65 @@ function renderFiles(files) {
 
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'file-actions';
-
-        if (file.type === 'FILE') {
-            const downloadBtn = createButton('Скачать', () => downloadFile(file.id), '📥');
-            const deleteBtn = createButton('Удалить', () => deleteFile(file.id), '🗑️');
-            actionsDiv.append(downloadBtn, deleteBtn);
-        } else if (file.type === 'FOLDER') {
-            const downloadZipBtn = createButton('Скачать ZIP', () => downloadFolder(file.id), '📦');
-            const deleteFolderBtn = createButton('Удалить', () => deleteFolder(file.id), '🗑️');
-            actionsDiv.append(downloadZipBtn, deleteFolderBtn);
-        }
+        appendFileActions(file, actionsDiv);
 
         fileDiv.append(nameSpan, actionsDiv);
         fileList.appendChild(fileDiv);
     });
 }
 
-function createButton(text, onClick, icon = '') {
-    const button = document.createElement('button');
-    button.innerHTML = icon ? `${icon} ${text}` : text;
-    button.onclick = onClick;
-    return button;
+function appendFileActions(file, container) {
+    if (file.type === 'FILE') {
+        container.append(
+            createButton('Скачать', () => downloadFile(file.id), '📥'),
+            createButton('Удалить', () => deleteFile(file.id), '🗑️')
+        );
+    } else if (file.type === 'FOLDER') {
+        container.append(
+            createButton('Скачать ZIP', () => downloadFolder(file.id), '📦'),
+            createButton('Удалить', () => deleteFolder(file.id), '🗑️')
+        );
+    }
+}
+
+function updateCurrentPathDisplay() {
+    const currentPathSpan = document.getElementById('currentPath');
+    currentPathSpan.textContent = "/" + (currentRelativePath ? currentRelativePath.replace(/\\/g, '/') : '');
+}
+
+function openFolder(folderId) {
+    currentRelativePath = folderId;
+    loadAllFiles();
+}
+
+function goHome() {
+    currentRelativePath = '';
+    loadAllFiles();
+}
+
+function goBack() {
+    if (!currentRelativePath) return;
+    const parts = currentRelativePath.split(/[\\\/]/).filter(Boolean);
+    parts.pop();
+    currentRelativePath = parts.join('/');
+    loadAllFiles();
 }
 
 function uploadFiles() {
     const input = document.getElementById('fileInput');
     const files = input.files;
 
-    if (files.length === 0) {
+    if (!files.length) {
         alert('Выберите файл(ы)');
         return;
     }
 
     const progressContainer = document.getElementById('uploadProgressContainer');
-    progressContainer.innerHTML = ''; 
+    progressContainer.innerHTML = '';
 
     Array.from(files).forEach(file => {
-        const uploadItem = document.createElement('div');
-        uploadItem.className = 'upload-item';
-        uploadItem.innerHTML = `
-            <div>${file.name}</div>
-            <div class="progress-bar">
-                <div class="progress-bar-fill" id="progress-${file.name.replace(/\W/g, '')}"></div>
-            </div>
-        `;
+        const progressId = `progress-${file.name.replace(/\W/g, '')}`;
+        const uploadItem = createProgressItem(file.name, progressId);
         progressContainer.appendChild(uploadItem);
 
         const formData = new FormData();
@@ -81,44 +117,69 @@ function uploadFiles() {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `${BASE_URL}/upload`, true);
 
-        xhr.upload.onprogress = function (event) {
-            if (event.lengthComputable) {
-                const percent = (event.loaded / event.total) * 100;
-                const progressFill = document.getElementById(`progress-${file.name.replace(/\W/g, '')}`);
-                if (progressFill) {
-                    progressFill.style.width = `${percent.toFixed(0)}%`;
-                    progressFill.textContent = `${percent.toFixed(0)}%`;
-                }
-            }
-        };
-
-        xhr.onload = function () {
-            const progressFill = document.getElementById(`progress-${file.name.replace(/\W/g, '')}`);
-            if (xhr.status === 200 || xhr.status === 201) {
-                setTimeout(() => {
-                    const uploadItem = progressFill.closest('.upload-item');
-                    if (uploadItem) {
-                        uploadItem.remove();
-                    }
-                    loadAllFiles();
-                }, 300);
-            } else {
-                alert(`Ошибка загрузки файла ${file.name}`);
-            }
-        };
-
-        xhr.onerror = function () {
-            alert(`Ошибка сети при загрузке файла ${file.name}`);
-        };
-
+        xhr.upload.onprogress = event => updateProgress(event, progressId);
+        xhr.onload = () => handleUploadComplete(xhr, progressId);
+        xhr.onerror = () => alert(`Ошибка сети при загрузке файла ${file.name}`);
         xhr.send(formData);
     });
+
+    input.value = '';
+}
+
+function uploadFolder() {
+    const input = document.getElementById('folderInput');
+    const files = input.files;
+
+    if (!files.length) {
+        alert('Выберите папку');
+        return;
+    }
+
+    const progressContainer = document.getElementById('uploadProgressContainer');
+    progressContainer.innerHTML = '';
+
+    const formData = new FormData();
+    Array.from(files).forEach((file, idx) => {
+        formData.append('files', file);
+        formData.append('relativePaths', file.webkitRelativePath);
+        const uploadItem = createProgressItem(file.webkitRelativePath, `progress-folder-${idx}`);
+        progressContainer.appendChild(uploadItem);
+    });
+
+    formData.append('parentFolderId', currentRelativePath);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${BASE_URL}/upload-folder`, true);
+
+    xhr.upload.onprogress = event => {
+        if (event.lengthComputable) {
+            const percent = (event.loaded / event.total) * 100;
+            Array.from(files).forEach((_, idx) =>
+                updateProgressBar(`progress-folder-${idx}`, percent)
+            );
+        }
+    };
+
+    xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+            setTimeout(() => {
+                progressContainer.innerHTML = '';
+                loadAllFiles();
+            }, 500);
+        } else {
+            alert('Ошибка загрузки папки');
+        }
+    };
+
+    xhr.onerror = () => alert('Ошибка сети при загрузке папки');
+    xhr.send(formData);
     input.value = '';
 }
 
 function createFolder() {
     const folderNameInput = document.getElementById('folderName');
     const folderName = folderNameInput.value.trim();
+
     if (!folderName) {
         alert('Введите имя папки');
         return;
@@ -156,6 +217,7 @@ function deleteFile(filePath) {
 
 function deleteFolder(folderId) {
     if (!confirm('Удалить папку и всё её содержимое?')) return;
+
     fetch(`${BASE_URL}/delete-folder/${encodeURIComponent(folderId)}`, {
         method: 'DELETE'
     })
@@ -190,111 +252,49 @@ function searchFiles() {
         .catch(error => console.error('Ошибка поиска:', error));
 }
 
-function openFolder(folderId) {
-    currentRelativePath = folderId;
-    loadAllFiles();
+function createButton(text, onClick, icon = '') {
+    const button = document.createElement('button');
+    button.innerHTML = icon ? `${icon} ${text}` : text;
+    button.onclick = onClick;
+    return button;
 }
 
-function goHome() {
-    currentRelativePath = '';
-    loadAllFiles();
+function createProgressItem(label, progressId) {
+    const uploadItem = document.createElement('div');
+    uploadItem.className = 'upload-item';
+    uploadItem.innerHTML = `
+        <div>${label}</div>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="${progressId}"></div>
+        </div>
+    `;
+    return uploadItem;
 }
 
-function goBack() {
-    if (!currentRelativePath) return;
-    const parts = currentRelativePath.split(/[\\\/]/).filter(Boolean);
-    parts.pop();
-    currentRelativePath = parts.join('/');
-    loadAllFiles();
-}
-
-function uploadFolder() {
-    const input = document.getElementById('folderInput');
-    const files = input.files;
-    if (files.length === 0) {
-        alert('Выберите папку');
-        return;
+function updateProgress(event, progressId) {
+    if (event.lengthComputable) {
+        const percent = (event.loaded / event.total) * 100;
+        updateProgressBar(progressId, percent);
     }
-    const progressContainer = document.getElementById('uploadProgressContainer');
-    progressContainer.innerHTML = '';
-    const formData = new FormData();
-    Array.from(files).forEach((file, idx) => {
-        formData.append('files', file);
-        formData.append('relativePaths', file.webkitRelativePath);
-        const uploadItem = document.createElement('div');
-        uploadItem.className = 'upload-item';
-        uploadItem.innerHTML = `<div>${file.webkitRelativePath}</div><div class="progress-bar"><div class="progress-bar-fill" id="progress-folder-${idx}"></div></div>`;
-        progressContainer.appendChild(uploadItem);
-    });
-    formData.append('parentFolderId', currentRelativePath);
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${BASE_URL}/upload-folder`, true);
-
-    xhr.upload.onprogress = function (event) {
-        if (event.lengthComputable) {
-            const percent = (event.loaded / event.total) * 100;
-            Array.from(files).forEach((file, idx) => {
-                const progressFill = document.getElementById(`progress-folder-${idx}`);
-                if (progressFill) {
-                    progressFill.style.width = `${percent.toFixed(0)}%`;
-                    progressFill.textContent = `${percent.toFixed(0)}%`;
-                }
-            });
-        }
-    };
-
-    xhr.onload = function () {
-        if (xhr.status === 200 || xhr.status === 201) {
-            setTimeout(() => {
-                Array.from(files).forEach((file, idx) => {
-                    const progressFill = document.getElementById(`progress-folder-${idx}`);
-                    if (progressFill) {
-                        const uploadItem = progressFill.closest('.upload-item');
-                        if (uploadItem) {
-                            uploadItem.remove();
-                        }
-                    }
-                });
-                progressContainer.innerHTML = '';
-                loadAllFiles();
-            }, 500);
-        } else {
-            alert('Ошибка загрузки папки');
-        }
-    };
-
-    xhr.onerror = function () {
-        alert('Ошибка сети при загрузке папки');
-    };
-
-    xhr.send(formData);
-    input.value = '';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const fullPath = window.location.pathname;
-    const storagePrefix = '/storage.html';
+function updateProgressBar(progressId, percent) {
+    const progressFill = document.getElementById(progressId);
+    if (progressFill) {
+        progressFill.style.width = `${percent.toFixed(0)}%`;
+        progressFill.textContent = `${percent.toFixed(0)}%`;
+    }
+}
 
-    if (fullPath.startsWith(storagePrefix)) {
-        const relative = fullPath.slice(storagePrefix.length);
-        currentRelativePath = decodeURIComponent(relative);
+function handleUploadComplete(xhr, progressId) {
+    const progressFill = document.getElementById(progressId);
+    if (xhr.status === 200 || xhr.status === 201) {
+        setTimeout(() => {
+            const uploadItem = progressFill?.closest('.upload-item');
+            if (uploadItem) uploadItem.remove();
+            loadAllFiles();
+        }, 300);
     } else {
-        currentRelativePath = '';
+        alert('Ошибка загрузки файла');
     }
-
-    loadAllFiles();
-});
-
-window.addEventListener('popstate', (event) => {
-    const fullPath = window.location.pathname;
-    const storagePrefix = '/storage.html';
-
-    if (fullPath.startsWith(storagePrefix)) {
-        const relative = fullPath.slice(storagePrefix.length);
-        currentRelativePath = decodeURIComponent(relative);
-    } else {
-        currentRelativePath = '';
-    }
-
-    loadAllFiles();
-});
+}

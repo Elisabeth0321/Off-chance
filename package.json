@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "boring-webcrypto-sha256": "^1.0.0"
+    "boring-webcrypto-sha256": "^1.0.0",
+    "crypto-js": "^4.2.0"
   }
 }

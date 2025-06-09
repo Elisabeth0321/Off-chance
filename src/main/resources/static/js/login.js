@@ -1,5 +1,3 @@
-import {hashPassword} from "./hash.js";
-
 class LoginForm {
     constructor(formId, errorContainerId) {
         this.form = document.getElementById(formId);
@@ -28,11 +26,9 @@ class LoginForm {
             return;
         }
 
-        const hashedPassword = await hashPassword(password);
-
         const payload = {
             email,
-            password: hashedPassword,
+            password,
             rememberMe
         };
 

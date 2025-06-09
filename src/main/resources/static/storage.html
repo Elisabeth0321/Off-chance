@@ -11,19 +11,31 @@
     <h1>Файловый Менеджер</h1>
 
     <div class="controls">
-        <input type="file" id="fileInput" multiple>
-        <button onclick="uploadFiles()">⬆️ Загрузить файл(ы)</button>
+        <div class="section section-upload">
+            <div class="section-content">
+                <input type="file" id="fileInput" multiple>
+                <button onclick="uploadFiles()">⬆️ Загрузить файл(ы)</button>
+            </div>
+            <div class="section-content">
+                <input type="file" id="folderInput" webkitdirectory directory multiple>
+                <button onclick="uploadFolder()">📁 Загрузить папку</button>
+            </div>
+        </div>
 
-        <input type="file" id="folderInput" webkitdirectory directory multiple style="margin-top:8px;">
-        <button onclick="uploadFolder()">📁 Загрузить папку</button>
+        <div class="section section-folder">
+            <div class="section-content">
+                <input type="text" id="folderName" placeholder="Имя новой папки">
+                <button onclick="createFolder()">➕ Создать папку</button>
+            </div>
+        </div>
 
-        <input type="text" id="folderName" placeholder="Имя новой папки">
-        <button onclick="createFolder()">➕ Создать папку</button>
-
-        <input type="text" id="searchQuery" placeholder="Поиск...">
-        <button onclick="searchFiles()">🔍 Искать</button>
-
-        <button onclick="loadAllFiles()">🗂️ Показать всё</button>
+        <div class="section section-search">
+            <div class="section-content">
+                <input type="text" id="searchQuery" placeholder="Поиск...">
+                <button onclick="searchFiles()">🔍 Искать</button>
+                <button onclick="loadAllFiles()">🗂️ Показать всё</button>
+            </div>
+        </div>
     </div>
 
     <div class="navigation-menu">

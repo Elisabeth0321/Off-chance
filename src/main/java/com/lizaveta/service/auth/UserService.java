@@ -21,7 +21,7 @@ public class UserService {
     private final PasswordService passwordService;
 
     public User register(String login, String rawPassword, String email) {
-        if (login == null || login.isBlank() || rawPassword == null || rawPassword.isBlank() || email == null || email.isBlank()) {
+        if (rawPassword == null || rawPassword.isBlank() || email == null || email.isBlank()) {
             throw new IllegalArgumentException("Все поля обязательны для заполнения.");
         }
 
@@ -44,7 +44,10 @@ public class UserService {
         return user;
     }
 
-    public Pair<Optional<AuthResponseDTO>, Optional<User>> login(String email, String rawPassword, boolean rememberMe, HttpServletResponse response) {
+    public Pair<Optional<AuthResponseDTO>, Optional<User>> login(String email,
+                                                                 String rawPassword,
+                                                                 boolean rememberMe,
+                                                                 HttpServletResponse response) {
         Optional<User> userOpt = userRepository.findByEmail(email);
 
         if (userOpt.isEmpty()) return Pair.of(Optional.empty(), Optional.empty());
@@ -63,9 +66,11 @@ public class UserService {
         user.setTimeLastLogin(Instant.now());
         userRepository.save(user);
 
-        Cookie accessCookie = tokenService.createAccessTokenCookie(accessToken, rememberMe);
-        Cookie refreshCookie = tokenService.createRefreshTokenCookie(refreshToken, rememberMe);
-        tokenService.addCookies(response, accessCookie, refreshCookie);
+        tokenService.addCookies(response,
+                "access_token", accessToken,
+                "refresh_token", refreshToken,
+                rememberMe
+        );
 
         AuthResponseDTO authResponse = new AuthResponseDTO(accessToken, refreshToken);
         return Pair.of(Optional.of(authResponse), Optional.of(user));
@@ -97,10 +102,7 @@ public class UserService {
         user.setRefreshToken(null);
         userRepository.save(user);
 
-        tokenService.addCookies(response,
-                tokenService.deleteAccessTokenCookie(),
-                tokenService.deleteRefreshTokenCookie()
-        );
+        tokenService.deleteCookies(response);
 
         return true;
     }

@@ -55,7 +55,12 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
-        Pair<Optional<AuthResponseDTO>, Optional<User>> result = userService.login(request.email(), request.password(), request.rememberMe(), response);
+        Pair<Optional<AuthResponseDTO>, Optional<User>> result = userService.login(
+                request.email(),
+                request.password(),
+                request.rememberMe(),
+                response
+        );
         Optional<AuthResponseDTO> authOpt = result.getFirst();
         if (authOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
