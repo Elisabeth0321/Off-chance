@@ -5,22 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2457001d-36e8-4c67-9373-3d16aa2d7058" name="Changes" comment="improved frontend&#10;fix acync methods">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/WebConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/model/UserAction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/WebConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/config/WebConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/StorageController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/PasswordService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/PasswordService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/TokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/TokenService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/auth/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/storage.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/storage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/hash.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/registration.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/registration.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/js/storage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/js/storage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/static/storage.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/storage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lizaveta/service/storage/StorageService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,7 +157,7 @@
       <workItem from="1748947587082" duration="1022000" />
       <workItem from="1749114564008" duration="2833000" />
       <workItem from="1749128064099" duration="272000" />
-      <workItem from="1749468082797" duration="1056000" />
+      <workItem from="1749468082797" duration="7531000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -196,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748288208200</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="improved frontend&#10;fix acync methods">
+      <option name="closed" value="true" />
+      <created>1749470038297</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749470038297</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -10,7 +10,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                // IP-адрес сервера
                 .allowedOrigins("http://192.168.100.13:8080", "http://localhost:8080")
                 .allowedMethods("*")
                 .allowedHeaders("*")
